@@ -17,68 +17,50 @@ class MyWindow < Gosu::Window
     @pattern.push
     @squareWidth = 200
     @score = 0
-    @roundStart = false
   end
 
   def update()
-    if button_down? Gosu::KbLeft
-    end
-    if button_down? Gosu::KbRight
-    end
-    if button_down? Gosu::KbUp
-    end
-    if button_down? Gosu::KbDown
-    end
-    if @roundStart
-      puts "round start"
-      fail = false
-      while not fail do
-        if button_down? Gosu::KbEscape
-          close
-        end
-        new = false
-        if button_down? Gosu::MsLeft
-          x = self.mouse_x.to_i
-          y = self.mouse_y.to_i
-          puts "mouse click"
-          if x > @width/2-@squareWidth and x < @width/2 and y < @height/2 and y > @height/2-@squareWidth
-            square = 1
-            new = true
-            puts "green"
-          end
-          if x < @width/2+@squareWidth and x > @width/2 and y < @height/2 and y > @height/2-@squareWidth
-            square = 2
-            new = true
-            puts "red"
-          end
-          if x > @width/2-@squareWidth and x < @width/2 and y > @height/2 and y < @height/2+@squareWidth
-            square = 3
-            new = true
-            puts "yellow"
-          end
-          if x < @width/2+@squareWidth and x > @width/2 and y > @height/2 and y < @height/2+@squareWidth
-            square = 4
-            puts "blue"
-            new = true
-          end
-        end
-        if new
-          @userPattern.push(square)
-          new = false
-        end
-        if @userPattern != @pattern[0...@userPattern.length]
-          fail = true
-          puts "You got #{@score}"
-          close
-        end
       end
-      @score += 1
-      pattern.push(Random.rand(4)+1)
-      @userPattern = []
-    end
-    puts "round end"
-  end
 
+  def button_down(id)
+    if id == Gosu::KbDown
+      pp @pattern
+    end
+    if button_down? Gosu::KbEscape
+      close
+    end
+    if button_down? Gosu::MsLeft
+      x = self.mouse_x.to_i
+      y = self.mouse_y.to_i
+      puts "mouse click"
+      if x > @width/2-@squareWidth and x < @width/2 and y < @height/2 and y > @height/2-@squareWidth
+        square = 1
+        puts "green"
+      end
+      if x < @width/2+@squareWidth and x > @width/2 and y < @height/2 and y > @height/2-@squareWidth
+        square = 2
+        puts "red"
+      end
+      if x > @width/2-@squareWidth and x < @width/2 and y > @height/2 and y < @height/2+@squareWidth
+        square = 3
+        puts "yellow"
+      end
+      if x < @width/2+@squareWidth and x > @width/2 and y > @height/2 and y < @height/2+@squareWidth
+        square = 4
+        puts "blue"
+      end
+      @userPattern.push(square)
+      if @userPattern != @pattern[0...@userPattern.length] 
+        puts "You got #{@score}"
+        close
+      end
+      if @userPattern == @pattern
+        @score += 1
+        @pattern.push(Random.rand(4)+1)
+        @userPattern = []
+      end
+    end
+  end
 
   def draw()
     white = Gosu::Color.argb(0xffffffff)
@@ -112,9 +94,12 @@ class MyWindow < Gosu::Window
         sleep(1)
         draw_quad(@width/2, @height/2, blue, @width/2+@squareWidth, @height/2, blue, @width/2+@squareWidth,@height/2+@squareWidth, blue, @width/2, @height/2+@squareWidth, blue)
       end
-      @roundStart = true
     end
     @font.draw("#{@score}",10,10,1.0,1.0,1.0,Gosu::Color::WHITE)
+  end
+
+  def needs_cursor?
+    true
   end
 end
 
