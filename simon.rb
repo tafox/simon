@@ -5,22 +5,25 @@ require 'gosu'
 
 class MyWindow < Gosu::Window
   def initialize
-    @width = 800
-    @height = 800
+    @width = 600
+    @height = 600
     super(@width,@height,false)
     self.caption = "Simon"
     @font = Gosu::Font.new(self,"Arial",14)
-    @board = [[0,0],[0,0]] 
     @pattern = []
     @userPattern = []
     @pattern.push(Random.rand(4)+1)
-    @pattern.push
     @squareWidth = 200
     @score = 0
+    @showPattern = 0
+    @repreat = false
   end
 
   def update()
-      end
+    if @showPattern != -1
+      sleep(0.75)
+    end
+  end
 
   def button_down(id)
     if id == Gosu::KbDown
@@ -29,25 +32,20 @@ class MyWindow < Gosu::Window
     if button_down? Gosu::KbEscape
       close
     end
-    if button_down? Gosu::MsLeft
+    if @showPattern == -1 and button_down? Gosu::MsLeft
       x = self.mouse_x.to_i
       y = self.mouse_y.to_i
-      puts "mouse click"
       if x > @width/2-@squareWidth and x < @width/2 and y < @height/2 and y > @height/2-@squareWidth
         square = 1
-        puts "green"
       end
       if x < @width/2+@squareWidth and x > @width/2 and y < @height/2 and y > @height/2-@squareWidth
         square = 2
-        puts "red"
       end
       if x > @width/2-@squareWidth and x < @width/2 and y > @height/2 and y < @height/2+@squareWidth
         square = 3
-        puts "yellow"
       end
       if x < @width/2+@squareWidth and x > @width/2 and y > @height/2 and y < @height/2+@squareWidth
         square = 4
-        puts "blue"
       end
       @userPattern.push(square)
       if @userPattern != @pattern[0...@userPattern.length] 
@@ -58,6 +56,7 @@ class MyWindow < Gosu::Window
         @score += 1
         @pattern.push(Random.rand(4)+1)
         @userPattern = []
+        @showPattern = 0
       end
     end
   end
@@ -73,27 +72,27 @@ class MyWindow < Gosu::Window
     draw_quad(@width/2, @height/2, red, @width/2+@squareWidth, @height/2, red, @width/2+@squareWidth,@height/2-@squareWidth, red, @width/2, @height/2-@squareWidth, red)
     draw_quad(@width/2, @height/2, yellow, @width/2-@squareWidth, @height/2, yellow, @width/2-@squareWidth,@height/2+@squareWidth, yellow, @width/2, @height/2+@squareWidth, yellow)
     draw_quad(@width/2, @height/2, blue, @width/2+@squareWidth, @height/2, blue, @width/2+@squareWidth,@height/2+@squareWidth, blue, @width/2, @height/2+@squareWidth, blue)
-    for e in @pattern
-      if e == 1
-        draw_quad(@width/2, @height/2, white, @width/2-@squareWidth, @height/2, white, @width/2-@squareWidth,@height/2-@squareWidth, white, @width/2, @height/2-@squareWidth, white)
-        sleep(1)
-        draw_quad(@width/2, @height/2, green, @width/2-@squareWidth, @height/2, green, @width/2-@squareWidth,@height/2-@squareWidth, green, @width/2, @height/2-@squareWidth, green)
+    if @showPattern != -1 and @showPattern != @pattern.length
+      square = @pattern[@showPattern]
+      if @showPattern > 0 and not @repeat and square == @pattern[@showPattern-1]
+        @showPattern -= 1
+        @repeat = true
+      elsif square == 1
+          draw_quad(@width/2, @height/2, white, @width/2-@squareWidth, @height/2, white, @width/2-@squareWidth,@height/2-@squareWidth, white, @width/2, @height/2-@squareWidth, white)
+          @repeat = false
+      elsif square == 2
+          draw_quad(@width/2, @height/2, white, @width/2+@squareWidth, @height/2, white, @width/2+@squareWidth,@height/2-@squareWidth, white, @width/2, @height/2-@squareWidth, white)
+          @repeat = false
+      elsif square == 3
+          draw_quad(@width/2, @height/2, white, @width/2-@squareWidth, @height/2, white, @width/2-@squareWidth,@height/2+@squareWidth, white, @width/2, @height/2+@squareWidth, white)
+          @repeat = false
+      elsif square == 4
+          draw_quad(@width/2, @height/2, white, @width/2+@squareWidth, @height/2, white, @width/2+@squareWidth,@height/2+@squareWidth, white, @width/2, @height/2+@squareWidth, white)
+          @repeat = false
       end
-      if e == 2
-        draw_quad(@width/2, @height/2, white, @width/2+@squareWidth, @height/2, white, @width/2+@squareWidth,@height/2-@squareWidth, white, @width/2, @height/2-@squareWidth, white)
-        sleep(1)
-        draw_quad(@width/2, @height/2, red, @width/2+@squareWidth, @height/2, red, @width/2+@squareWidth,@height/2-@squareWidth, red, @width/2, @height/2-@squareWidth, red)
-      end
-      if e == 3
-        draw_quad(@width/2, @height/2, white, @width/2-@squareWidth, @height/2, white, @width/2-@squareWidth,@height/2+@squareWidth, white, @width/2, @height/2+@squareWidth, white)
-        sleep(1)
-        draw_quad(@width/2, @height/2, yellow, @width/2-@squareWidth, @height/2, yellow, @width/2-@squareWidth,@height/2+@squareWidth, yellow, @width/2, @height/2+@squareWidth, yellow)
-      end
-      if e == 4
-        draw_quad(@width/2, @height/2, white, @width/2+@squareWidth, @height/2, white, @width/2+@squareWidth,@height/2+@squareWidth, white, @width/2, @height/2+@squareWidth, white)
-        sleep(1)
-        draw_quad(@width/2, @height/2, blue, @width/2+@squareWidth, @height/2, blue, @width/2+@squareWidth,@height/2+@squareWidth, blue, @width/2, @height/2+@squareWidth, blue)
-      end
+      @showPattern += 1
+    else
+      @showPattern = -1
     end
     @font.draw("#{@score}",10,10,1.0,1.0,1.0,Gosu::Color::WHITE)
   end
